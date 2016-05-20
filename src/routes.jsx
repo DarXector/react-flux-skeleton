@@ -2,20 +2,23 @@ var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
+var CreateHashHistory = require('history').createHashHistory;
 
-var Base = require('./components/Base.jsx');
-var Page1 = require('./components/Page1.jsx');
-var Page2 = require('./components/Page2.jsx');
-var ListManager = require('./components/ListManager.jsx');
+var History = new CreateHashHistory({
+   queryKey: false
+});
+
+var Base = require('./components/routes/Base.jsx');
+var Form = require('./components/routes/Form.jsx');
+var Lists = require('./components/routes/Lists.jsx');
 
 var Routes = (
-    <Router>
+    <Router history={History}>
         <Route path="/" component={Base}>
-            <Route path="/page1" component={Page1} />
-            <Route path="/page2" component={Page2} />
-            <Route path="/list" component={ListManager} />
+            <Route path="/form" component={Form} />
+            <Route path="/lists" component={Lists} />
         </Route>
     </Router>
-)
+);
 
 module.exports = Routes;

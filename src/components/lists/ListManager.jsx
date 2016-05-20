@@ -1,13 +1,21 @@
 var React = require('react');
 var List = require('./List.jsx');
+var HTTP = require('../../services/HttpService');
 
 var ListManager = React.createClass({
 
     getInitialState: function() {
         return {
-            items: [],
+            [this.props.type]: [],
             newItemText: ''
         }
+    },
+
+    componentWillMount: function(){
+        HTTP.get('/'+this.props.type)
+            .then(function(data){
+                this.setState({[this.props.type]: data});
+            }.bind(this));
     },
 
     onChange: function(e){
@@ -17,11 +25,11 @@ var ListManager = React.createClass({
     handleSubmit: function(element) {
         element.preventDefault();
 
-        var currentItems = this.state.items;
+        var currentItems = this.state[this.props.type];
         currentItems.push(this.state.newItemText);
 
         this.setState({
-            items: currentItems,
+            [this.props.type]: currentItems,
             newItemText: ''
         });
     },
@@ -54,7 +62,7 @@ var ListManager = React.createClass({
                             </div>
                         </form>
                     </div>
-                    <List items={this.state.items} />
+                    <List items={this.state[this.props.type]} />
                 </div>
             </div>
         )

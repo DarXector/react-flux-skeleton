@@ -18,5 +18,10 @@
     "react-dom": "^15.0.2",
     "react-router": "^2.4.0",
     "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "email-validator": "^1.0.4",
+    "history": "^2.1.1",
+    "whatwg-fetch": "^1.0.0"
   }
 }
