@@ -1,37 +1,43 @@
 var React = require('react');
 var List = require('./List.jsx');
-var HTTP = require('../../services/HttpService');
+var Reflux = require('reflux');
+var ListItem = require('./ListItem.jsx');
+var ListActions = require('../../reflux/ListActions.jsx');
+var ListStore = require('../../reflux/ListStore.jsx');
 
 var ListManager = React.createClass({
 
+    mixins:[Reflux.listenTo(ListStore, 'onChange')],
+
     getInitialState: function() {
         return {
-            [this.props.type]: [],
-            newItemText: ''
+            newItemText: '',
+            [this.props.type]: []
         }
     },
 
     componentWillMount: function(){
-        HTTP.get('/'+this.props.type)
-            .then(function(data){
-                this.setState({[this.props.type]: data});
-            }.bind(this));
+        ListActions.getItems(this.props.type);
     },
 
-    onChange: function(e){
+    onChange: function(event, data){
+        this.setState({
+            [this.props.type]: data[this.props.type]
+        })
+    },
+
+    onInputChange: function(e){
         this.setState({newItemText: e.target.value});
     },
 
-    handleSubmit: function(element) {
-        element.preventDefault();
+    handleSubmit: function(event) {
+        event.preventDefault();
 
-        var currentItems = this.state[this.props.type];
-        currentItems.push(this.state.newItemText);
+        if(this.state.newItemText){
+            ListActions.postItem(this.props.type, this.state.newItemText);
+        }
 
-        this.setState({
-            [this.props.type]: currentItems,
-            newItemText: ''
-        });
+        this.setState({newItemText: ''});
     },
 
     render: function(){
@@ -55,7 +61,9 @@ var ListManager = React.createClass({
                     <div className="row panel-body">
                         <form onSubmit={this.handleSubmit}>
                             <div className="col-sm-9">
-                                <input className="form-control" onChange={this.onChange} value={this.state.newItemText} />
+                                <input className="form-control"
+                                       onChange={this.onInputChange}
+                                       value={this.state.newItemText} />
                             </div>
                             <div className="col-sm-2">
                                 <button className="btn btn-primary">Add</button>

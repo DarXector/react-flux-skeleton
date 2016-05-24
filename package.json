@@ -22,6 +22,7 @@
   "dependencies": {
     "email-validator": "^1.0.4",
     "history": "^2.1.1",
+    "reflux": "^0.4.1",
     "whatwg-fetch": "^1.0.0"
   }
 }

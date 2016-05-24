@@ -5,8 +5,8 @@ var List = React.createClass({
 
     render: function(){
 
-        var createItem = function(text, index){
-            return <ListItem key={index + text} text={text} />
+        var createItem = function(item){
+            return <ListItem key={item.id} text={item.text} />
         };
 
         return ( <ul>{this.props.items.map(createItem)}</ul> );
