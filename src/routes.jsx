@@ -2,21 +2,26 @@ var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
+var IndexRoute = ReactRouter.IndexRoute;
 var CreateHashHistory = require('history').createHashHistory;
 
 var History = new CreateHashHistory({
    queryKey: false
 });
 
-var Base = require('./components/routes/Base.jsx');
-var Form = require('./components/routes/Form.jsx');
-var Lists = require('./components/routes/Lists.jsx');
+var BasePage = require('./components/routes/BasePage.jsx');
+var HomePage = require('./components/routes/HomePage.jsx');
+var ProductPage = require('./components/routes/ProductPage.jsx');
+var FormPage = require('./components/routes/FormPage.jsx');
+var ListsPage = require('./components/routes/ListsPage.jsx');
 
 var Routes = (
     <Router history={History}>
-        <Route path="/" component={Base}>
-            <Route path="/form" component={Form} />
-            <Route path="/lists" component={Lists} />
+        <Route path="/" component={BasePage}>
+            <IndexRoute component={HomePage} />
+            <Route path="/product/:productId" component={ProductPage} />
+            <Route path="/form" component={FormPage} />
+            <Route path="/lists" component={ListsPage} />
         </Route>
     </Router>
 );

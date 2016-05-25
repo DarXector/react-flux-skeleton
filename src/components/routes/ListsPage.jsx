@@ -1,7 +1,7 @@
 var React = require('react');
 var ListManager = require('../lists/ListManager.jsx');
 
-var Lists = React.createClass({
+var ListsPage = React.createClass({
     render: function(){
         return (
             <div className="row">
@@ -12,4 +12,4 @@ var Lists = React.createClass({
     }
 });
 
-module.exports = Lists;
+module.exports = ListsPage;

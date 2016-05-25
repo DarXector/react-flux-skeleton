@@ -27156,57 +27156,227 @@ var ListManager = React.createClass({
 
 module.exports = ListManager;
 
-},{"../../reflux/ListActions.jsx":287,"../../reflux/ListStore.jsx":288,"./List.jsx":280,"./ListItem.jsx":281,"react":256,"reflux":273}],283:[function(require,module,exports){
+},{"../../reflux/ListActions.jsx":291,"../../reflux/ListStore.jsx":292,"./List.jsx":280,"./ListItem.jsx":281,"react":256,"reflux":273}],283:[function(require,module,exports){
 var React = require('react');
+var NavItem = require('./NavItem.jsx');
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
 
-var Base = React.createClass({
-    displayName: "Base",
+var NavBar = React.createClass({
+    displayName: 'NavBar',
+
 
     render: function () {
+
+        var navStyle = {},
+            titleStyle = {},
+            linkStyle = {};
+
+        if (this.props.bgColor) {
+            navStyle.background = this.props.bgColor;
+        }
+
+        if (this.props.titleColor) {
+            titleStyle.color = this.props.titleColor;
+        }
+
+        if (this.props.linkColor) {
+            linkStyle.color = this.props.linkColor;
+        }
+
+        var createLinkItem = function (item, index) {
+            return React.createElement(NavItem, { aStyle: linkStyle, key: item.title + index, href: item.href, title: item.title });
+        };
+
         return React.createElement(
-            "div",
+            'div',
             null,
             React.createElement(
-                "h1",
-                null,
-                "Header"
-            ),
-            React.createElement(
-                "div",
-                { className: "row" },
-                this.props.children
-            ),
-            React.createElement(
-                "h1",
-                null,
-                "Footer"
+                'nav',
+                { style: navStyle, className: 'navbar navbar-default' },
+                React.createElement(
+                    'div',
+                    { className: 'navbar-header' },
+                    React.createElement(
+                        'button',
+                        { type: 'button',
+                            className: 'navbar-toggle collapsed',
+                            'data-toggle': 'collapse',
+                            'data-target': '#nav-collapse' },
+                        React.createElement('span', { className: 'icon-bar' }),
+                        React.createElement('span', { className: 'icon-bar' }),
+                        React.createElement('span', { className: 'icon-bar' })
+                    ),
+                    React.createElement(
+                        Link,
+                        { style: titleStyle, className: 'navbar-brand', to: '/' },
+                        'ReactJS Skeleton'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'collapse navbar-collapse', id: 'nav-collapse' },
+                    React.createElement(
+                        'ul',
+                        { className: 'nav navbar-nav' },
+                        this.props.navData.map(createLinkItem)
+                    )
+                )
             )
         );
     }
 });
 
-module.exports = Base;
+module.exports = NavBar;
 
-},{"react":256}],284:[function(require,module,exports){
+},{"./NavItem.jsx":284,"react":256,"react-router":60}],284:[function(require,module,exports){
+var React = require('react');
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
+
+var NavItem = React.createClass({
+    displayName: 'NavItem',
+
+
+    getInitialState: function () {
+        return {
+            hover: false
+        };
+    },
+
+    mouseOver: function () {
+        this.setState({
+            hover: true
+        });
+    },
+
+    mouseOut: function () {
+        this.setState({
+            hover: false
+        });
+    },
+
+    render: function () {
+        return React.createElement(
+            'li',
+            { className: this.state.hover ? "active" : "",
+                onMouseOver: this.mouseOver,
+                onMouseOut: this.mouseOut },
+            React.createElement(
+                Link,
+                { style: this.props.aStyle, to: this.props.href },
+                this.props.title
+            )
+        );
+    }
+});
+
+module.exports = NavItem;
+
+},{"react":256,"react-router":60}],285:[function(require,module,exports){
+var React = require('react');
+var NavBar = require('../nav/NavBar.jsx');
+
+var navLinks = [{
+    title: "Home",
+    href: "/"
+}, {
+    title: "Courses",
+    href: "#"
+}, {
+    title: "Form",
+    href: "/form"
+}, {
+    title: "Lists",
+    href: "/lists"
+}];
+
+var BasePage = React.createClass({
+    displayName: 'BasePage',
+
+    render: function () {
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(NavBar, { bgColor: '#fff',
+                titleColor: '#3097d1',
+                navData: navLinks }),
+            React.createElement(
+                'div',
+                { className: 'row' },
+                this.props.children
+            )
+        );
+    }
+});
+
+module.exports = BasePage;
+
+},{"../nav/NavBar.jsx":283,"react":256}],286:[function(require,module,exports){
 var React = require('react');
 var LeadCapture = require('../form/LeadCapture.jsx');
 
-var Form = React.createClass({
-    displayName: 'Form',
+var FormPage = React.createClass({
+    displayName: 'FormPage',
 
     render: function () {
         return React.createElement(LeadCapture, null);
     }
 });
 
-module.exports = Form;
+module.exports = FormPage;
 
-},{"../form/LeadCapture.jsx":278,"react":256}],285:[function(require,module,exports){
+},{"../form/LeadCapture.jsx":278,"react":256}],287:[function(require,module,exports){
+var React = require('react');
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
+
+var HomePage = React.createClass({
+    displayName: 'HomePage',
+
+    render: function () {
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'h1',
+                null,
+                'Home'
+            ),
+            React.createElement(
+                'ul',
+                null,
+                React.createElement(
+                    'li',
+                    null,
+                    React.createElement(
+                        Link,
+                        { to: '/product/55' },
+                        'iOS Course'
+                    )
+                ),
+                React.createElement(
+                    'li',
+                    null,
+                    React.createElement(
+                        Link,
+                        { to: '/product/65' },
+                        'React Course'
+                    )
+                )
+            )
+        );
+    }
+});
+
+module.exports = HomePage;
+
+},{"react":256,"react-router":60}],288:[function(require,module,exports){
 var React = require('react');
 var ListManager = require('../lists/ListManager.jsx');
 
-var Lists = React.createClass({
-    displayName: 'Lists',
+var ListsPage = React.createClass({
+    displayName: 'ListsPage',
 
     render: function () {
         return React.createElement(
@@ -27218,23 +27388,60 @@ var Lists = React.createClass({
     }
 });
 
-module.exports = Lists;
+module.exports = ListsPage;
 
-},{"../lists/ListManager.jsx":282,"react":256}],286:[function(require,module,exports){
+},{"../lists/ListManager.jsx":282,"react":256}],289:[function(require,module,exports){
+var React = require('react');
+
+var ProductPage = React.createClass({
+    displayName: 'ProductPage',
+
+
+    getInitialState: function () {
+        return {
+            pip: ''
+        };
+    },
+
+    componentDidMount: function () {
+        this.setState({
+            pid: this.props.params.productId
+        });
+    },
+
+    componentWillReceiveProps: function (nextProps) {
+        this.setState({
+            pid: nextProps.params.productId
+        });
+    },
+
+    render: function () {
+        return React.createElement(
+            'h1',
+            null,
+            'Hi, I\'m product number ',
+            this.state.pid
+        );
+    }
+});
+
+module.exports = ProductPage;
+
+},{"react":256}],290:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Routes = require('./routes.jsx');
 
 ReactDOM.render(Routes, document.getElementById('main'));
 
-},{"./routes.jsx":289,"react":256,"react-dom":30}],287:[function(require,module,exports){
+},{"./routes.jsx":293,"react":256,"react-dom":30}],291:[function(require,module,exports){
 var Reflux = require('reflux');
 
 var ListActions = Reflux.createActions(['getItems', 'postItem']);
 
 module.exports = ListActions;
 
-},{"reflux":273}],288:[function(require,module,exports){
+},{"reflux":273}],292:[function(require,module,exports){
 var Reflux = require('reflux');
 var HTTP = require('../services/HttpService');
 var ListActions = require('./ListActions.jsx');
@@ -27281,35 +27488,40 @@ var ListStore = Reflux.createStore({
 
 module.exports = ListStore;
 
-},{"../services/HttpService":290,"./ListActions.jsx":287,"reflux":273}],289:[function(require,module,exports){
+},{"../services/HttpService":294,"./ListActions.jsx":291,"reflux":273}],293:[function(require,module,exports){
 var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
+var IndexRoute = ReactRouter.IndexRoute;
 var CreateHashHistory = require('history').createHashHistory;
 
 var History = new CreateHashHistory({
     queryKey: false
 });
 
-var Base = require('./components/routes/Base.jsx');
-var Form = require('./components/routes/Form.jsx');
-var Lists = require('./components/routes/Lists.jsx');
+var BasePage = require('./components/routes/BasePage.jsx');
+var HomePage = require('./components/routes/HomePage.jsx');
+var ProductPage = require('./components/routes/ProductPage.jsx');
+var FormPage = require('./components/routes/FormPage.jsx');
+var ListsPage = require('./components/routes/ListsPage.jsx');
 
 var Routes = React.createElement(
     Router,
     { history: History },
     React.createElement(
         Route,
-        { path: '/', component: Base },
-        React.createElement(Route, { path: '/form', component: Form }),
-        React.createElement(Route, { path: '/lists', component: Lists })
+        { path: '/', component: BasePage },
+        React.createElement(IndexRoute, { component: HomePage }),
+        React.createElement(Route, { path: '/product/:productId', component: ProductPage }),
+        React.createElement(Route, { path: '/form', component: FormPage }),
+        React.createElement(Route, { path: '/lists', component: ListsPage })
     )
 );
 
 module.exports = Routes;
 
-},{"./components/routes/Base.jsx":283,"./components/routes/Form.jsx":284,"./components/routes/Lists.jsx":285,"history":18,"react":256,"react-router":60}],290:[function(require,module,exports){
+},{"./components/routes/BasePage.jsx":285,"./components/routes/FormPage.jsx":286,"./components/routes/HomePage.jsx":287,"./components/routes/ListsPage.jsx":288,"./components/routes/ProductPage.jsx":289,"history":18,"react":256,"react-router":60}],294:[function(require,module,exports){
 var Fetch = require('whatwg-fetch');
 
 var baseUrl = 'http://localhost:6060';
@@ -27337,4 +27549,4 @@ var service = {
 
 module.exports = service;
 
-},{"whatwg-fetch":276}]},{},[286]);
+},{"whatwg-fetch":276}]},{},[290]);

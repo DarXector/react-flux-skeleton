@@ -1,7 +1,7 @@
 var React = require('react');
 var LeadCapture = require('../form/LeadCapture.jsx');
 
-var Form = React.createClass({
+var FormPage = React.createClass({
     render: function(){
         return (
             <LeadCapture />
@@ -9,4 +9,4 @@ var Form = React.createClass({
     }
 });
 
-module.exports = Form;
+module.exports = FormPage;
