@@ -1,16 +1,11 @@
 var React = require('react');
 var NavBar = require('../nav/NavBar.jsx');
+var LeadCapture = require('../form/LeadCapture.jsx');
 
 var navLinks = [
     {
         title: "Home",
         href: "/"
-    },{
-        title: "Courses",
-        href: "#"
-    },{
-        title: "Form",
-        href: "/form"
     },{
         title: "Lists",
         href: "/lists"
@@ -24,7 +19,12 @@ var BasePage = React.createClass({
                 <NavBar bgColor="#fff"
                     titleColor="#3097d1"
                     navData={navLinks} />
-                <div className="row">{this.props.children}</div>
+                <div className="row">
+                    <div className="col-sm-9">{this.props.children}</div>
+                    <div className="col-sm-3">
+                        <LeadCapture />
+                    </div>
+                </div>
             </div>
         );
     }

@@ -12,7 +12,6 @@ var History = new CreateHashHistory({
 var BasePage = require('./components/routes/BasePage.jsx');
 var HomePage = require('./components/routes/HomePage.jsx');
 var ProductPage = require('./components/routes/ProductPage.jsx');
-var FormPage = require('./components/routes/FormPage.jsx');
 var ListsPage = require('./components/routes/ListsPage.jsx');
 
 var Routes = (
@@ -20,7 +19,6 @@ var Routes = (
         <Route path="/" component={BasePage}>
             <IndexRoute component={HomePage} />
             <Route path="/product/:productId" component={ProductPage} />
-            <Route path="/form" component={FormPage} />
             <Route path="/lists" component={ListsPage} />
         </Route>
     </Router>

@@ -26924,43 +26924,91 @@ module.exports = EmailField;
 var React = require('react');
 var EmailField = require('./EmailField.jsx');
 var NameField = require('./NameField.jsx');
+var Reflux = require('reflux');
+var EmailActions = require('../../reflux/EmailActions.jsx');
+var EmailStore = require('../../reflux/EmailStore.jsx');
 
 var LeadCapture = React.createClass({
     displayName: 'LeadCapture',
 
 
+    mixins: [Reflux.listenTo(EmailStore, 'onChange')],
+
+    getInitialState: function () {
+        return {
+            submitted: false
+        };
+    },
+
     onSubmit: function (e) {
+
+        this.setState({
+            submitted: false
+        });
+
         if (!this.refs.fieldEmail.state.valid) {
             alert("Invalid email or no email entered!");
         } else {
-            var httpRequestBody = {
+            var subscriber = {
                 email: this.refs.fieldEmail.state.value,
                 name: this.refs.fieldName.state.value
             };
 
             this.refs.fieldEmail.clear();
             this.refs.fieldName.clear();
+
+            EmailActions.submitEmail(subscriber);
+        }
+    },
+
+    onChange: function (msg) {
+        if (msg === 'Email submitted!') {
+            this.setState({
+                submitted: true
+            });
         }
     },
 
     render: function () {
+
+        var successStyle = {
+            color: "green",
+            visibility: this.state.submitted ? 'visible' : 'hidden'
+        };
+
         return React.createElement(
             'div',
-            { className: 'col-sm-3' },
+            { className: 'panel panel-default' },
             React.createElement(
                 'div',
-                { className: 'panel panel-default' },
+                { className: 'panel-heading' },
+                'Get Something Free'
+            ),
+            React.createElement(
+                'div',
+                { className: 'panel-body' },
+                React.createElement(NameField, { type: 'First', ref: 'fieldName' }),
+                React.createElement(EmailField, { ref: 'fieldEmail' }),
                 React.createElement(
                     'div',
-                    { className: 'panel-body' },
-                    React.createElement(NameField, { type: 'First', ref: 'fieldName' }),
-                    React.createElement(EmailField, { ref: 'fieldEmail' }),
+                    { className: 'row' },
                     React.createElement(
-                        'button',
-                        {
-                            className: 'btn btn-primary',
-                            onClick: this.onSubmit },
-                        'Submit'
+                        'div',
+                        { className: 'col-sm-6' },
+                        React.createElement(
+                            'button',
+                            { className: 'btn btn-primary', onClick: this.onSubmit },
+                            'Submit'
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-2' },
+                        React.createElement(
+                            'h5',
+                            { style: successStyle },
+                            'Success'
+                        )
                     )
                 )
             )
@@ -26970,7 +27018,7 @@ var LeadCapture = React.createClass({
 
 module.exports = LeadCapture;
 
-},{"./EmailField.jsx":277,"./NameField.jsx":279,"react":256}],279:[function(require,module,exports){
+},{"../../reflux/EmailActions.jsx":290,"../../reflux/EmailStore.jsx":291,"./EmailField.jsx":277,"./NameField.jsx":279,"react":256,"reflux":273}],279:[function(require,module,exports){
 var React = require('react');
 
 var NameField = React.createClass({
@@ -27110,45 +27158,41 @@ var ListManager = React.createClass({
 
         return React.createElement(
             'div',
-            { style: divStyle, className: 'col-sm-4' },
+            { className: 'panel panel-primary' },
             React.createElement(
                 'div',
-                { className: 'panel panel-primary' },
+                { style: headingStyle, className: 'panel-heading' },
                 React.createElement(
-                    'div',
-                    { style: headingStyle, className: 'panel-heading' },
-                    React.createElement(
-                        'h3',
-                        null,
-                        this.props.title
-                    )
-                ),
+                    'h3',
+                    null,
+                    this.props.title
+                )
+            ),
+            React.createElement(
+                'div',
+                { className: 'row panel-body' },
                 React.createElement(
-                    'div',
-                    { className: 'row panel-body' },
+                    'form',
+                    { onSubmit: this.handleSubmit },
                     React.createElement(
-                        'form',
-                        { onSubmit: this.handleSubmit },
+                        'div',
+                        { className: 'col-sm-9' },
+                        React.createElement('input', { className: 'form-control',
+                            onChange: this.onInputChange,
+                            value: this.state.newItemText })
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-sm-2' },
                         React.createElement(
-                            'div',
-                            { className: 'col-sm-9' },
-                            React.createElement('input', { className: 'form-control',
-                                onChange: this.onInputChange,
-                                value: this.state.newItemText })
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'col-sm-2' },
-                            React.createElement(
-                                'button',
-                                { className: 'btn btn-primary' },
-                                'Add'
-                            )
+                            'button',
+                            { className: 'btn btn-primary' },
+                            'Add'
                         )
                     )
-                ),
-                React.createElement(List, { items: this.state[this.props.type] })
-            )
+                )
+            ),
+            React.createElement(List, { items: this.state[this.props.type] })
         );
     }
 
@@ -27156,7 +27200,7 @@ var ListManager = React.createClass({
 
 module.exports = ListManager;
 
-},{"../../reflux/ListActions.jsx":291,"../../reflux/ListStore.jsx":292,"./List.jsx":280,"./ListItem.jsx":281,"react":256,"reflux":273}],283:[function(require,module,exports){
+},{"../../reflux/ListActions.jsx":292,"../../reflux/ListStore.jsx":293,"./List.jsx":280,"./ListItem.jsx":281,"react":256,"reflux":273}],283:[function(require,module,exports){
 var React = require('react');
 var NavItem = require('./NavItem.jsx');
 var ReactRouter = require('react-router');
@@ -27276,16 +27320,11 @@ module.exports = NavItem;
 },{"react":256,"react-router":60}],285:[function(require,module,exports){
 var React = require('react');
 var NavBar = require('../nav/NavBar.jsx');
+var LeadCapture = require('../form/LeadCapture.jsx');
 
 var navLinks = [{
     title: "Home",
     href: "/"
-}, {
-    title: "Courses",
-    href: "#"
-}, {
-    title: "Form",
-    href: "/form"
 }, {
     title: "Lists",
     href: "/lists"
@@ -27304,7 +27343,16 @@ var BasePage = React.createClass({
             React.createElement(
                 'div',
                 { className: 'row' },
-                this.props.children
+                React.createElement(
+                    'div',
+                    { className: 'col-sm-9' },
+                    this.props.children
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'col-sm-3' },
+                    React.createElement(LeadCapture, null)
+                )
             )
         );
     }
@@ -27312,21 +27360,7 @@ var BasePage = React.createClass({
 
 module.exports = BasePage;
 
-},{"../nav/NavBar.jsx":283,"react":256}],286:[function(require,module,exports){
-var React = require('react');
-var LeadCapture = require('../form/LeadCapture.jsx');
-
-var FormPage = React.createClass({
-    displayName: 'FormPage',
-
-    render: function () {
-        return React.createElement(LeadCapture, null);
-    }
-});
-
-module.exports = FormPage;
-
-},{"../form/LeadCapture.jsx":278,"react":256}],287:[function(require,module,exports){
+},{"../form/LeadCapture.jsx":278,"../nav/NavBar.jsx":283,"react":256}],286:[function(require,module,exports){
 var React = require('react');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
@@ -27371,7 +27405,7 @@ var HomePage = React.createClass({
 
 module.exports = HomePage;
 
-},{"react":256,"react-router":60}],288:[function(require,module,exports){
+},{"react":256,"react-router":60}],287:[function(require,module,exports){
 var React = require('react');
 var ListManager = require('../lists/ListManager.jsx');
 
@@ -27382,15 +27416,23 @@ var ListsPage = React.createClass({
         return React.createElement(
             'div',
             { className: 'row' },
-            React.createElement(ListManager, { title: 'Ingredients', type: 'ingredients', store: 'IngredientsStore' }),
-            React.createElement(ListManager, { title: 'ToDos', type: 'todos', headingColor: '#FFA500' })
+            React.createElement(
+                'div',
+                { className: 'col-sm-5' },
+                React.createElement(ListManager, { title: 'Ingredients', type: 'ingredients', store: 'IngredientsStore' })
+            ),
+            React.createElement(
+                'div',
+                { className: 'col-sm-5' },
+                React.createElement(ListManager, { title: 'ToDos', type: 'todos', headingColor: '#FFA500' })
+            )
         );
     }
 });
 
 module.exports = ListsPage;
 
-},{"../lists/ListManager.jsx":282,"react":256}],289:[function(require,module,exports){
+},{"../lists/ListManager.jsx":282,"react":256}],288:[function(require,module,exports){
 var React = require('react');
 
 var ProductPage = React.createClass({
@@ -27427,21 +27469,54 @@ var ProductPage = React.createClass({
 
 module.exports = ProductPage;
 
-},{"react":256}],290:[function(require,module,exports){
+},{"react":256}],289:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Routes = require('./routes.jsx');
 
 ReactDOM.render(Routes, document.getElementById('main'));
 
-},{"./routes.jsx":293,"react":256,"react-dom":30}],291:[function(require,module,exports){
+},{"./routes.jsx":294,"react":256,"react-dom":30}],290:[function(require,module,exports){
 var Reflux = require('reflux');
 
-var ListActions = Reflux.createActions(['getItems', 'postItem']);
+var ListActions = Reflux.createActions(['submitEmail']);
 
 module.exports = ListActions;
 
-},{"reflux":273}],292:[function(require,module,exports){
+},{"reflux":273}],291:[function(require,module,exports){
+var Reflux = require('reflux');
+var HTTP = require('../services/HttpService');
+var EmailActions = require('./EmailActions.jsx');
+
+var EmailStore = Reflux.createStore({
+    listenables: [EmailActions],
+
+    submitEmail: function (subscriber) {
+        HTTP.post('/subscribers', subscriber).then(function (response) {
+            var msg = '';
+
+            if (response.status === 200) {
+                msg = 'Email submitted!';
+            } else {
+                msg = 'Submission failed!';
+            }
+
+            this.trigger(msg);
+        }.bind(this));
+    }
+
+});
+
+module.exports = EmailStore;
+
+},{"../services/HttpService":295,"./EmailActions.jsx":290,"reflux":273}],292:[function(require,module,exports){
+var Reflux = require('reflux');
+
+var ListActions = Reflux.createActions(['getItems', 'postItem', 'submitEmail']);
+
+module.exports = ListActions;
+
+},{"reflux":273}],293:[function(require,module,exports){
 var Reflux = require('reflux');
 var HTTP = require('../services/HttpService');
 var ListActions = require('./ListActions.jsx');
@@ -27488,7 +27563,7 @@ var ListStore = Reflux.createStore({
 
 module.exports = ListStore;
 
-},{"../services/HttpService":294,"./ListActions.jsx":291,"reflux":273}],293:[function(require,module,exports){
+},{"../services/HttpService":295,"./ListActions.jsx":292,"reflux":273}],294:[function(require,module,exports){
 var React = require('react');
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
@@ -27503,7 +27578,6 @@ var History = new CreateHashHistory({
 var BasePage = require('./components/routes/BasePage.jsx');
 var HomePage = require('./components/routes/HomePage.jsx');
 var ProductPage = require('./components/routes/ProductPage.jsx');
-var FormPage = require('./components/routes/FormPage.jsx');
 var ListsPage = require('./components/routes/ListsPage.jsx');
 
 var Routes = React.createElement(
@@ -27514,14 +27588,13 @@ var Routes = React.createElement(
         { path: '/', component: BasePage },
         React.createElement(IndexRoute, { component: HomePage }),
         React.createElement(Route, { path: '/product/:productId', component: ProductPage }),
-        React.createElement(Route, { path: '/form', component: FormPage }),
         React.createElement(Route, { path: '/lists', component: ListsPage })
     )
 );
 
 module.exports = Routes;
 
-},{"./components/routes/BasePage.jsx":285,"./components/routes/FormPage.jsx":286,"./components/routes/HomePage.jsx":287,"./components/routes/ListsPage.jsx":288,"./components/routes/ProductPage.jsx":289,"history":18,"react":256,"react-router":60}],294:[function(require,module,exports){
+},{"./components/routes/BasePage.jsx":285,"./components/routes/HomePage.jsx":286,"./components/routes/ListsPage.jsx":287,"./components/routes/ProductPage.jsx":288,"history":18,"react":256,"react-router":60}],295:[function(require,module,exports){
 var Fetch = require('whatwg-fetch');
 
 var baseUrl = 'http://localhost:6060';
@@ -27549,4 +27622,4 @@ var service = {
 
 module.exports = service;
 
-},{"whatwg-fetch":276}]},{},[290]);
+},{"whatwg-fetch":276}]},{},[289]);

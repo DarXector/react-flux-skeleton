@@ -5,8 +5,12 @@ var ListsPage = React.createClass({
     render: function(){
         return (
             <div className="row">
-                <ListManager title="Ingredients" type="ingredients" store="IngredientsStore" />
-                <ListManager title="ToDos" type="todos" headingColor="#FFA500" />
+                <div className="col-sm-5">
+                    <ListManager title="Ingredients" type="ingredients" store="IngredientsStore" />
+                </div>
+                <div className="col-sm-5">
+                    <ListManager title="ToDos" type="todos" headingColor="#FFA500" />
+                </div>
             </div>
         );
     }
